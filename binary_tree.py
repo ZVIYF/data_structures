@@ -13,6 +13,17 @@ class BinaryTree:
         self.root = BinaryTree.insert(self.root, val)
 
     @staticmethod
+    def insert(node, val):
+        if node is None:
+            return TreeNode(val)
+        if node.data > val:
+            node.left = BinaryTree.insert(node.left, val)
+            return node
+        else:
+            node.right = BinaryTree.insert(node.right, val)
+            return node
+
+    @staticmethod
     def list_to_binary_tree(my_list):
         my_tree = BinaryTree()
         for val in my_list:
@@ -45,17 +56,6 @@ class BinaryTree:
         BinaryTree.print_in_order_rec(node.left)
         print(node.data, end=", ")
         BinaryTree.print_in_order_rec(node.right)
-
-    @staticmethod
-    def insert(node, val):
-        if node is None:
-            return TreeNode(val)
-        if node.data > val:
-            node.left = BinaryTree.insert(node.left, val)
-            return node
-        else:
-            node.right = BinaryTree.insert(node.right, val)
-            return node
 
     @staticmethod
     def search_rec(node, val):
@@ -100,6 +100,69 @@ class BinaryTree:
         level = max(left, right)
         return level
 
+    def is_full_tree(self):
+        return self.is_full_tree_rec(self.root)
+
+    @staticmethod
+    def is_full_tree_rec(node):
+        if node is None:
+            return True
+        if node.left is None and node.right is None:
+            return True
+        if (node.left is None) != (node.right is None):
+            return False
+        return BinaryTree.is_full_tree_rec(node.left) and BinaryTree.is_full_tree_rec(node.right)
+
+    def is_balanced(self):
+        return self.is_balanced_rec(self.root)
+
+    @staticmethod
+    def is_balanced_rec(node):
+        if node is None:
+            return True
+        dif = BinaryTree.levels_count_rec(node.left) - BinaryTree.levels_count_rec(node.right)
+        if not 1 > dif > -1:
+            return False
+        return BinaryTree.is_balanced_rec(node.left) and BinaryTree.is_balanced_rec(node.right)
+
+    def remove(self, val):
+        self.root = self.remove_rec(self.root)
+
+    @staticmethod
+    def remove_rec(node, val):
+        if node is None:
+            return None
+        if node.data == val:
+            return BinaryTree.delete_node(node)
+        if node.data > val:
+            node.left = BinaryTree.remove_rec(node.left, val)
+            return node
+        if node.data < val:
+            node.right = BinaryTree.remove_rec(node.right, val)
+            return node
+
+    @staticmethod
+    def find_min_rec(node):
+        if node.left is None:
+            return node
+        return BinaryTree.find_min_rec(node.left)
+
+    @staticmethod
+    def find_max_rec(node):
+        if node.right is None:
+            return node
+        return BinaryTree.find_max_rec(node.right)
+
+
+    @staticmethod
+    def delete_node(node):
+        if node.right is None:
+            return node.left
+        if node.left is None:
+            return node.right
+        right = BinaryTree.find_min_rec(node.right)
+        right.left = node.left
+        return node.right
 
 
 
